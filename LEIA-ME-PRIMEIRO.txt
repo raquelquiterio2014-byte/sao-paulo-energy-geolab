@@ -1,0 +1,17 @@
+Sao Paulo Energy GeoLab
+
+1. Extraia o ZIP inteiro para uma pasta, por exemplo D:\sao-paulo-energy-geolab.
+2. Instale Python 3.11 ou 3.12, incluindo o launcher do Windows.
+3. Execute INSTALL.bat uma vez e espere concluir.
+4. Execute TEST.bat para testar.
+5. Execute START.bat e mantenha a janela aberta.
+6. Abra http://127.0.0.1:8001 no navegador.
+
+A interface está em inglês. Os dados incluídos são SINTÉTICOS.
+Não são o cadastro oficial de usinas nem a malha real completa.
+A importação aceita GeoJSON no formato documentado em README.md.
+Importações duram apenas na sessão do navegador: exporte para conservar uma cópia.
+Os cálculos não confirmam conexões elétricas.
+O mapa depende de internet para carregar a biblioteca e o mapa-base.
+
+Caso ocorra um erro, mantenha o terminal aberto e copie a mensagem completa.

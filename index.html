@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Energy GeoLab</title>
+<link href="https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.css" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--accent:#4fd8d0}*{box-sizing:border-box}body{margin:0;background:#0b1424;color:#e5edf7;font:15px system-ui,sans-serif}header{padding:25px 30px;background:#12243b;border-bottom:1px solid #28435e}h1{margin:0 0 8px;font-size:28px}h2{font-size:19px}p{line-height:1.5}small,.muted{color:#b0c4d8}main{display:grid;grid-template-columns:290px minmax(0,1fr);gap:18px;padding:20px}aside,section{min-width:0}.card{background:#122035;border:1px solid #29415c;border-radius:12px;padding:17px;margin-bottom:16px}label{display:block;margin:12px 0 5px}select,button,input{font:inherit;width:100%;padding:10px;border-radius:6px;border:1px solid #49627d;background:#182d46;color:#fff}button{cursor:pointer;background:#176c81;margin-top:9px}button:disabled{opacity:.5;cursor:wait}#map{height:490px;border-radius:10px;background:#182d46}#notice{color:#ffdb8b}#error{color:#ffb3b3;white-space:pre-wrap}#stats{font-size:16px;color:var(--accent);margin:12px 0}table{border-collapse:collapse;width:100%;font-size:13px}th,td{text-align:left;padding:10px;border-bottom:1px solid #29415c}.scroll{overflow:auto}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}.legend{display:flex;gap:18px;flex-wrap:wrap;margin:12px 0;font-size:13px}a{color:#8de6ff}input[type=checkbox]{width:auto}@media(max-width:850px){main{grid-template-columns:1fr}#map{height:380px}}
+</style></head><body>
+<header><h1 id="title">Energy GeoLab</h1><div>Generation · Transmission infrastructure · Spatial evidence</div><p id="notice">Loading dataset…</p></header>
+<main><aside><div class="card"><h2>Explore the grid</h2>
+<label for="region">Region</label><select id="region"></select>
+<label for="state">State</label><select id="state"></select>
+<label for="city">Municipality</label><select id="city"></select>
+<label for="fuel">Generation source</label><select id="fuel"></select>
+<p><small>Generation-source filters affect plants only.</small></p>
+<label><input type="checkbox" id="plants" checked> Plants</label>
+<label><input type="checkbox" id="subs" checked> Substations</label>
+<label><input type="checkbox" id="lines" checked> Supplied line geometries</label>
+<button id="fit">Fit visible infrastructure</button></div>
+<div class="card"><h2>Spatial analysis</h2><label for="plant">Select a visible plant</label><select id="plant"></select>
+<button id="analyze">Find nearest substations</button><p><small id="scope"></small></p></div>
+<div class="card"><h2>Dataset</h2><label for="upload">Import normalized GeoJSON</label><input id="upload" type="file" accept=".json,.geojson">
+<button id="demo">Restore synthetic demo</button><button id="download">Export loaded GeoJSON</button>
+<p><small>Imports stay in this browser session. Export to keep a copy. Reloading restores the demo. Limit: 20 MiB / 20,000 features.</small></p></div></aside>
+<section><div id="error" role="alert"></div><div class="card"><div id="stats"></div>
+<div class="legend"><span style="color:#50ddd4">● Plants</span><span style="color:#ffcc6d">● Substations</span><span style="color:#ad9dff">━ Supplied lines</span><span>Dashed: distance measurements</span></div>
+<div id="map"></div><p id="mapstatus" class="muted"></p><p><small>Measurements are not electrical connections. Supplied line geometry does not establish electrical topology or available capacity.</small></p></div>
+<div class="card"><h2>Asset details</h2><p class="muted">Click an installation or line on the map.</p><pre id="details">No asset selected.</pre></div>
+<div class="card"><h2>Nearest substations</h2><p id="analysisnote">Select a plant to calculate WGS84 geodesic distances.</p><div class="scroll"><table><thead><tr><th>Substation</th><th>State</th><th>Distance (km)</th><th>Connection</th></tr></thead><tbody id="results"></tbody></table></div><button id="csv">Export results CSV</button><button id="report">Export analysis JSON</button></div>
+<div class="card"><h2>Regional comparison</h2><p class="muted">Current map filters. Capacity means installed capacity in the supplied records, not actual generation.</p><div class="scroll"><table><thead><tr><th>State</th><th>Plants</th><th>Substations</th><th>Lines*</th><th>Known MW</th><th>Plants missing MW</th></tr></thead><tbody id="summary"></tbody></table></div><p><small>*Line records are grouped by declared state. Split cross-border routes before import. Counts are dataset counts, not official national totals.</small></p></div>
+<div class="card"><h2>Methodology & data quality</h2><p id="quality"></p><ul><li>Coordinates: WGS84 longitude/latitude. Distances: ellipsoidal geodesics.</li><li>Dates are source dates supplied by the importer, not independently verified.</li><li>Imported does not mean verified or complete.</li><li>No power-flow, congestion or investment-feasibility inference.</li><li>Different IDs are not automatically deduplicated across inventories.</li><li>Coordinate and state formats are checked; state-boundary containment is not validated.</li></ul><p>Official reference portals: <a href="https://www.ons.org.br/paginas/sobre-o-sin/mapas" target="_blank" rel="noopener">ONS</a> · <a href="https://www.epe.gov.br/pt/publicacoes-dados-abertos/publicacoes/webmap-epe" target="_blank" rel="noopener">EPE</a></p></div></section></main>
+<script src="https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script>
+<script src="/app.js" defer></script>
+</body></html>

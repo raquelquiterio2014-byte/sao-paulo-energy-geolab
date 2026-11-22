@@ -1,0 +1,10 @@
+{
+  "title": "Sao Paulo Energy GeoLab",
+  "scope": "SP",
+  "port": 8001,
+  "center": [
+    -48,
+    -22.5
+  ],
+  "zoom": 6
+}

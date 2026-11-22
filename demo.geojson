@@ -1,0 +1,375 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "state": "SP",
+        "municipality": "Campinas",
+        "source": "Synthetic educational scenario",
+        "source_date": "2026-11-18",
+        "data_status": "synthetic",
+        "id": "DEMO-SP-01-plant",
+        "name": "DEMO Campinas Plant 01",
+        "kind": "plant",
+        "fuel": "Solar",
+        "capacity_mw": 30
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -47.02,
+          -22.88
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "state": "SP",
+        "municipality": "Campinas",
+        "source": "Synthetic educational scenario",
+        "source_date": "2026-11-18",
+        "data_status": "synthetic",
+        "id": "DEMO-SP-01-substation",
+        "name": "DEMO Campinas Substation 01",
+        "kind": "substation",
+        "voltage_kv": 138
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -47.1,
+          -22.93
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "state": "SP",
+        "municipality": "Campinas",
+        "source": "Synthetic educational scenario",
+        "source_date": "2026-11-18",
+        "data_status": "synthetic",
+        "id": "DEMO-SP-01-line",
+        "name": "DEMO Campinas Line 01",
+        "kind": "line",
+        "voltage_kv": 138
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -47.1,
+            -22.93
+          ],
+          [
+            -47.150000000000006,
+            -22.97
+          ],
+          [
+            -47.190000000000005,
+            -22.95
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "state": "SP",
+        "municipality": "Ribeirao Preto",
+        "source": "Synthetic educational scenario",
+        "source_date": "2026-11-18",
+        "data_status": "synthetic",
+        "id": "DEMO-SP-02-plant",
+        "name": "DEMO Ribeirao Preto Plant 02",
+        "kind": "plant",
+        "fuel": "Hydro",
+        "capacity_mw": 35
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -47.77,
+          -21.14
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "state": "SP",
+        "municipality": "Ribeirao Preto",
+        "source": "Synthetic educational scenario",
+        "source_date": "2026-11-18",
+        "data_status": "synthetic",
+        "id": "DEMO-SP-02-substation",
+        "name": "DEMO Ribeirao Preto Substation 02",
+        "kind": "substation",
+        "voltage_kv": 230
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -47.85,
+          -21.19
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "state": "SP",
+        "municipality": "Ribeirao Preto",
+        "source": "Synthetic educational scenario",
+        "source_date": "2026-11-18",
+        "data_status": "synthetic",
+        "id": "DEMO-SP-02-line",
+        "name": "DEMO Ribeirao Preto Line 02",
+        "kind": "line",
+        "voltage_kv": 230
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -47.85,
+            -21.19
+          ],
+          [
+            -47.900000000000006,
+            -21.23
+          ],
+          [
+            -47.940000000000005,
+            -21.21
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "state": "SP",
+        "municipality": "Sorocaba",
+        "source": "Synthetic educational scenario",
+        "source_date": "2026-11-18",
+        "data_status": "synthetic",
+        "id": "DEMO-SP-03-plant",
+        "name": "DEMO Sorocaba Plant 03",
+        "kind": "plant",
+        "fuel": "Biomass",
+        "capacity_mw": 40
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -47.42,
+          -23.47
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "state": "SP",
+        "municipality": "Sorocaba",
+        "source": "Synthetic educational scenario",
+        "source_date": "2026-11-18",
+        "data_status": "synthetic",
+        "id": "DEMO-SP-03-substation",
+        "name": "DEMO Sorocaba Substation 03",
+        "kind": "substation",
+        "voltage_kv": 138
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -47.5,
+          -23.52
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "state": "SP",
+        "municipality": "Sorocaba",
+        "source": "Synthetic educational scenario",
+        "source_date": "2026-11-18",
+        "data_status": "synthetic",
+        "id": "DEMO-SP-03-line",
+        "name": "DEMO Sorocaba Line 03",
+        "kind": "line",
+        "voltage_kv": 138
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -47.5,
+            -23.52
+          ],
+          [
+            -47.550000000000004,
+            -23.56
+          ],
+          [
+            -47.59,
+            -23.54
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "state": "SP",
+        "municipality": "Bauru",
+        "source": "Synthetic educational scenario",
+        "source_date": "2026-11-18",
+        "data_status": "synthetic",
+        "id": "DEMO-SP-04-plant",
+        "name": "DEMO Bauru Plant 04",
+        "kind": "plant",
+        "fuel": "Wind",
+        "capacity_mw": 45
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -49.02,
+          -22.279999999999998
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "state": "SP",
+        "municipality": "Bauru",
+        "source": "Synthetic educational scenario",
+        "source_date": "2026-11-18",
+        "data_status": "synthetic",
+        "id": "DEMO-SP-04-substation",
+        "name": "DEMO Bauru Substation 04",
+        "kind": "substation",
+        "voltage_kv": 230
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -49.1,
+          -22.33
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "state": "SP",
+        "municipality": "Bauru",
+        "source": "Synthetic educational scenario",
+        "source_date": "2026-11-18",
+        "data_status": "synthetic",
+        "id": "DEMO-SP-04-line",
+        "name": "DEMO Bauru Line 04",
+        "kind": "line",
+        "voltage_kv": 230
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -49.1,
+            -22.33
+          ],
+          [
+            -49.150000000000006,
+            -22.369999999999997
+          ],
+          [
+            -49.190000000000005,
+            -22.349999999999998
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "state": "SP",
+        "municipality": "Sao Jose do Rio Preto",
+        "source": "Synthetic educational scenario",
+        "source_date": "2026-11-18",
+        "data_status": "synthetic",
+        "id": "DEMO-SP-05-plant",
+        "name": "DEMO Sao Jose do Rio Preto Plant 05",
+        "kind": "plant",
+        "fuel": "Thermal",
+        "capacity_mw": 50
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -49.34,
+          -20.779999999999998
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "state": "SP",
+        "municipality": "Sao Jose do Rio Preto",
+        "source": "Synthetic educational scenario",
+        "source_date": "2026-11-18",
+        "data_status": "synthetic",
+        "id": "DEMO-SP-05-substation",
+        "name": "DEMO Sao Jose do Rio Preto Substation 05",
+        "kind": "substation",
+        "voltage_kv": 138
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -49.42,
+          -20.83
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "state": "SP",
+        "municipality": "Sao Jose do Rio Preto",
+        "source": "Synthetic educational scenario",
+        "source_date": "2026-11-18",
+        "data_status": "synthetic",
+        "id": "DEMO-SP-05-line",
+        "name": "DEMO Sao Jose do Rio Preto Line 05",
+        "kind": "line",
+        "voltage_kv": 138
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -49.42,
+            -20.83
+          ],
+          [
+            -49.470000000000006,
+            -20.869999999999997
+          ],
+          [
+            -49.510000000000005,
+            -20.849999999999998
+          ]
+        ]
+      }
+    }
+  ]
+}
