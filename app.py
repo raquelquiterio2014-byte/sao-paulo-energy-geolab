@@ -6,9 +6,12 @@ import argparse
 import hashlib
 import json
 import math
+import os
+import sqlite3
+from storage import Store
 
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi import FastAPI, HTTPException, Request, Query
+from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from geographiclib.geodesic import Geodesic
 
@@ -23,6 +26,7 @@ REGIONS = {
 }
 MAX_BYTES = 20 * 1024 * 1024
 MAX_FEATURES = 20000
+DB_PATH = Path(os.environ.get('ENERGY_DB_PATH', BASE / 'data' / 'energy_geolab.sqlite3'))
 
 
 def require(condition, message):
@@ -215,6 +219,98 @@ async def nearest_api(request: Request):
         return nearest(data, payload.get('plant_id'))
     except (ValueError, TypeError, KeyError, OverflowError) as error:
         raise HTTPException(422, str(error))
+
+
+
+
+def store():
+    return Store(DB_PATH)
+
+
+@app.exception_handler(sqlite3.Error)
+async def database_error(request, error):
+    return JSONResponse(status_code=503, content={'detail':
+        'Database unavailable. Check that the data folder is writable and has free space; do not delete your database.'})
+
+
+@app.middleware('http')
+async def local_origin(request, call_next):
+    origin = request.headers.get('origin')
+    if request.method == 'POST' and origin and origin != str(request.base_url).rstrip('/'):
+        return JSONResponse(status_code=403, content={'detail': 'Cross-origin writes are not allowed.'})
+    return await call_next(request)
+
+
+@app.get('/api/state')
+def saved_state():
+    db = store()
+    current = db.current()
+    if current is None:
+        current = db.save_dataset(demo(), 'Synthetic demo')
+    return current
+
+
+@app.get('/api/datasets')
+def saved_datasets():
+    return store().datasets()
+
+
+@app.post('/api/datasets')
+async def import_dataset(request: Request):
+    payload = await body(request)
+    try:
+        require(isinstance(payload, dict), 'Expected an object.')
+        name = payload.get('name', 'Imported dataset')
+        require(isinstance(name, str) and 0 < len(name.strip()) <= 200, 'Dataset name must have 1–200 characters.')
+        data = validate(payload.get('dataset'), CONFIG['scope'])
+        return store().save_dataset(data, name.strip())
+    except (ValueError, TypeError, OverflowError) as error:
+        raise HTTPException(422, str(error))
+
+
+@app.post('/api/datasets/{dataset_id}/activate')
+async def activate_dataset(dataset_id: int, request: Request):
+    await body(request)
+    try:
+        return store().activate(dataset_id)
+    except KeyError:
+        raise HTTPException(404, 'Dataset not found.')
+
+
+@app.post('/api/demo/activate')
+async def activate_demo(request: Request):
+    await body(request)
+    return store().save_dataset(demo(), 'Synthetic demo')
+
+
+@app.post('/api/analyses')
+async def create_analysis(request: Request):
+    payload = await body(request)
+    try:
+        require(isinstance(payload, dict), 'Expected an object.')
+        dataset_id = payload.get('dataset_id')
+        require(type(dataset_id) is int and dataset_id > 0, 'Select a saved dataset.')
+        db = store()
+        saved = db.dataset(dataset_id)
+        result = nearest(saved['dataset'], payload.get('plant_id'))
+        return db.save_analysis(dataset_id, result)
+    except KeyError:
+        raise HTTPException(404, 'Dataset not found.')
+    except (ValueError, TypeError) as error:
+        raise HTTPException(422, str(error))
+
+
+@app.get('/api/analyses')
+def analysis_history(limit: int = Query(50, ge=1, le=100), offset: int = Query(0, ge=0)):
+    return store().history(limit, offset)
+
+
+@app.get('/api/analyses/{analysis_id}')
+def saved_analysis(analysis_id: int):
+    try:
+        return store().analysis(analysis_id)
+    except KeyError:
+        raise HTTPException(404, 'Analysis not found.')
 
 
 if __name__ == '__main__':

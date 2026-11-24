@@ -3,6 +3,7 @@ const $ = id => document.getElementById(id);
 const empty = () => ({type:'FeatureCollection', features:[]});
 let dataset = empty(), visible = [], analysis = null, map = null, ready = false;
 let currentMeasurements = empty(), config = null, revision = 0;
+let savedDatasetId = null, historyOffset = 0, historyTotal = 0;
 async function api(path, payload) {
   const options = payload === undefined ? {} : {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)};
   const response = await fetch(path, options);
@@ -102,29 +103,73 @@ function csvCell(value) {
 });
 $('plant').onchange = clearAnalysis; $('fit').onclick = fit;
 $('download').onclick = () => download('dataset.geojson', JSON.stringify(dataset,null,2), 'application/geo+json');
-$('demo').onclick = async () => {try {setDataset(await api('/api/demo'));} catch(e){fail(e);}};
-$('upload').onchange = async event => {
-  try {
-    const file = event.target.files[0]; if(!file) return;
+async function busy(action) {
+  const controls = [...document.querySelectorAll('button,select,input')];
+  controls.forEach(e => e.disabled=true); $('error').textContent='';
+  try {await action();} catch(e) {fail(e);} finally {controls.forEach(e => e.disabled=false);}
+}
+function acceptSaved(saved) {
+  savedDatasetId = saved.id;
+  setDataset(saved.dataset);
+  $('savedStatus').textContent=`Saved dataset #${saved.id}: ${saved.name}. Stored in local SQLite.`;
+}
+async function refreshDatasets() {
+  const rows = await api('/api/datasets'); $('savedDataset').replaceChildren();
+  rows.forEach(row => $('savedDataset').add(new Option(`#${row.id} ${row.name} — ${row.feature_count} records (${row.synthetic_count} synthetic)`,row.id)));
+  $('savedDataset').value=String(savedDatasetId);
+}
+async function refreshHistory() {
+  const data = await api(`/api/analyses?limit=50&offset=${historyOffset}`);
+  historyTotal=data.total; $('history').replaceChildren();
+  data.items.forEach(row => $('history').add(new Option(
+    `#${row.id} · ${new Date(row.created_at).toLocaleString()} · ${row.plant_name} · ${row.dataset_name} (${row.synthetic_count}/${row.feature_count} synthetic)`,row.id)));
+  $('historyCount').textContent=data.total ? `${historyOffset+1}–${historyOffset+data.items.length} of ${data.total} saved analyses.` : 'No saved analyses yet.';
+}
+function displayReport(saved) {
+  const result = saved.report;
+  analysis = {...result, saved_analysis_id:saved.id, saved_dataset_id:saved.dataset_id, saved_at:saved.created_at};
+  currentMeasurements = result.measurements;
+  if(ready) map.getSource('measurements').setData(currentMeasurements);
+  $('results').replaceChildren();
+  result.results.forEach(r => appendRow('results',[r.name,r.state,r.distance_km.toFixed(3),r.connection_status]));
+  $('analysisnote').textContent = `${result.plant.name}: ${result.results.length} nearest of ${result.candidate_count} loaded substations. Saved analysis #${saved.id} · ${new Date(saved.created_at).toLocaleString()}. Distances do not prove connections.`;
+}
+$('demo').onclick = () => busy(async () => {
+  acceptSaved(await api('/api/demo/activate',{})); await refreshDatasets();
+});
+$('openDataset').onclick = () => busy(async () => {
+  if(!$('savedDataset').value) throw Error('No saved dataset selected.');
+  acceptSaved(await api(`/api/datasets/${$('savedDataset').value}/activate`,{}));
+});
+$('upload').onchange = event => {
+  const file=event.target.files[0];
+  if(!file) return;
+  busy(async () => {
     if(file.size > 20*1024*1024) throw Error('Maximum file size: 20 MiB.');
-    setDataset(await api('/api/validate', JSON.parse(await file.text())));
-  } catch(e){fail(e);} finally {event.target.value='';}
+    const data=JSON.parse(await file.text());
+    const saved=await api('/api/datasets',{name:file.name.slice(0,200),dataset:data});
+    acceptSaved(saved); await refreshDatasets();
+  }).finally(() => {event.target.value='';});
 };
-$('analyze').onclick = async () => {
-  const selected = $('plant').value;
-  if(!selected) return fail(Error('No plant available under the current filters.'));
-  clearAnalysis(); const requestRevision = revision;
-  $('analyze').disabled=true; $('error').textContent='';
-  try {
-    const result = await api('/api/nearest', {dataset, plant_id:selected});
-    if(revision !== requestRevision) return;
-    analysis = result; currentMeasurements = result.measurements;
-    if(ready) map.getSource('measurements').setData(currentMeasurements);
-    $('results').replaceChildren();
-    result.results.forEach(r => appendRow('results',[r.name,r.state,r.distance_km.toFixed(3),r.connection_status]));
-    $('analysisnote').textContent = `${result.plant.name}: ${result.results.length} nearest of ${result.candidate_count} loaded substations. Map filters do not restrict candidates. Distances do not prove connections.`;
-  } catch(e){if(revision === requestRevision) fail(e);} finally {$('analyze').disabled=false;}
-};
+$('analyze').onclick = () => busy(async () => {
+  const selected=$('plant').value;
+  if(!selected || savedDatasetId === null) throw Error('Select a plant from a saved dataset.');
+  clearAnalysis();
+  displayReport(await api('/api/analyses',{dataset_id:savedDatasetId,plant_id:selected}));
+  historyOffset=0; await refreshHistory();
+});
+$('openHistory').onclick = () => busy(async () => {
+  if(!$('history').value) throw Error('No saved analysis selected.');
+  const saved=await api(`/api/analyses/${$('history').value}`);
+  acceptSaved(await api(`/api/datasets/${saved.dataset_id}/activate`,{}));
+  // A historic plant may be hidden by the current layer toggles. Restore all layers.
+  ['plants','subs','lines'].forEach(id => $(id).checked=true);
+  refresh(); $('plant').value=saved.plant_id; displayReport(saved);
+  await refreshDatasets(); fit();
+});
+$('refreshHistory').onclick = () => busy(async () => {historyOffset=0;await refreshHistory();});
+$('previousHistory').onclick = () => busy(async () => {historyOffset=Math.max(0,historyOffset-50);await refreshHistory();});
+$('nextHistory').onclick = () => busy(async () => {if(historyOffset+50<historyTotal) historyOffset+=50;await refreshHistory();});
 $('csv').onclick = () => {
   if(!analysis) return fail(Error('Run an analysis first.'));
   const columns = ['plant_id','substation_id','name','state','municipality','distance_km','connection_status','data_status','source','source_date'];
@@ -138,7 +183,8 @@ $('report').onclick = () => {
 async function start() {
   config = await api('/api/config'); $('title').textContent=config.title; document.title=config.title;
   $('scope').textContent='Searches all substations in the loaded dataset, regardless of map filters. '+(config.scope ? 'SP records only; cross-border candidates require the Brazil edition.' : 'Candidates may cross state boundaries.');
-  setDataset(await api('/api/demo'));
+  acceptSaved(await api('/api/state'));
+  await refreshDatasets(); await refreshHistory();
   try {
     if(!window.maplibregl) throw Error('MapLibre could not load.');
     map = new maplibregl.Map({container:'map',center:config.center,zoom:config.zoom,
@@ -156,4 +202,4 @@ async function start() {
     });
   } catch(e) {$('mapstatus').textContent='Map unavailable: '+e.message+' Tables and analysis still work.';}
 }
-start().catch(fail);
+busy(start);

@@ -1,24 +1,20 @@
-# Delivery validation — 2026-11-18
+# Validation — SQLite edition 1.1
 
-Edition: sao-paulo-energy-geolab
-Environment: Linux, Python 3.12.14.
+42/42 automated tests passed on Linux / Python 3.12, using the pinned primary dependencies.
+26 existing calculation/input/API tests and 16 new SQLite persistence/API tests.
 
-- 26/26 unit and HTTP API tests passed in each edition.
-- Tested using the exact primary package versions in requirements.txt.
-- Resolved dependency versions are recorded in requirements-lock.txt.
-- JavaScript syntax checked with node --check (shared script for both editions).
-- Tests include geodesic reference distance, identity, symmetry, measurement
-  endpoints, ranking, empty candidates, cross-state candidates, provenance,
-  scope rejection, invalid geometry, missing capacity, duplicates, request size,
-  content type and API response checks.
-- ZIP member CRCs verified after packaging.
+New checks: imported dataset recovery in a fresh Python process; analysis recovery
+in a fresh process; immutable historical snapshots after another import; rollback
+and foreign keys; exact reimport deduplication; changed-content snapshots; demo
+switch preserves history; unknown IDs; invalid import leaves active data intact;
+pagination; mismatched hash rejection; SQL-like names stored literally; visible
+database failure; cross-origin writes rejected.
 
-Limitations:
-- Browser automation was attempted but Chromium could not start because this
-  execution environment disallowed a required process socket. Visual rendering,
-  live map tile access and interactive browser flows were not validated here.
-- Windows BAT launchers are supplied but were not executed on Windows here.
-- No real national energy inventory, electrical topology or field validation.
-- Demo assets and routes are synthetic.
+JavaScript syntax passed node --check. Browser automation was attempted, but
+Chromium could not start because the environment disallowed a process socket.
+The new browser controls and Windows BAT launchers still require local confirmation.
+The previous edition's map and Campinas export flow were confirmed by the user's
+screenshots and exported CSV/JSON. That does not validate the new history controls.
 
-Run TEST.bat locally after installation to repeat backend/API tests.
+No real official dataset or electrical connection validation is included.
+No local database or imported user data is included in the ZIP or repository.

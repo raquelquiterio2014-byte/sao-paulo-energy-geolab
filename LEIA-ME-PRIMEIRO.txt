@@ -10,7 +10,12 @@ Sao Paulo Energy GeoLab
 A interface está em inglês. Os dados incluídos são SINTÉTICOS.
 Não são o cadastro oficial de usinas nem a malha real completa.
 A importação aceita GeoJSON no formato documentado em README.md.
-Importações duram apenas na sessão do navegador: exporte para conservar uma cópia.
+Versão 1.1: importações e histórico agora ficam salvos em SQLite.
+O sistema reabre o último conjunto após atualizar a página ou reiniciar.
+Use Saved datasets para reabrir importações e Saved analysis history para resultados.
+O banco é criado em data\energy_geolab.sqlite3. Não apague essa pasta ao atualizar.
+Para backup, pare o servidor e copie o arquivo do banco para outro local.
+Ao mudar de pasta, copie também a pasta data para manter os dados.
 Os cálculos não confirmam conexões elétricas.
 O mapa depende de internet para carregar a biblioteca e o mapa-base.
 

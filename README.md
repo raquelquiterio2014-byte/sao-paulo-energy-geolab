@@ -1,12 +1,12 @@
 # Sao Paulo Energy GeoLab
 
-Educational local application. Interface and code in English.
+Version 1.1 — SQLite persistence. Educational local application. Interface and code in English.
 
 ## Windows quick start
 1. Extract the ZIP completely to a writable folder (not inside the ZIP).
 2. Install Python 3.11 or 3.12 with the Windows Python launcher.
 3. Double-click INSTALL.bat once; internet access is required for dependencies.
-4. Double-click TEST.bat to run the included 26 backend/API tests.
+4. Double-click TEST.bat to run the included 42 backend/API/persistence tests.
 5. Double-click START.bat and keep the terminal window open.
 6. Open http://127.0.0.1:8001 in your browser.
 7. Press Ctrl+C in the terminal to stop.
@@ -34,7 +34,7 @@ Both editions run independently on different ports.
 - Five nearest substations, WGS84 ellipsoidal distances using GeographicLib.
 - State comparisons, known installed MW and missing-capacity counts.
 - GeoJSON import/export, CSV results and JSON report with normalized-dataset SHA-256.
-- Strict input validation and 26 unit/API tests.
+- Strict input validation and 42 unit/API/persistence tests.
 
 ## Data status
 All bundled installations, capacities and routes are SYNTHETIC and fictional.
@@ -44,9 +44,42 @@ No official inventory, automatic feed or electrical topology is bundled.
 
 Only state=SP records are accepted. Nearest searches exclude neighboring states; use the Brazil edition for cross-border studies.
 
-Imports replace the current browser session's dataset. They do not merge records.
-Refresh/restart restores the demo. Export loaded GeoJSON to keep a local copy.
+Imports are validated and saved as immutable snapshots in local SQLite. They do not merge records.
+The last active dataset is restored after browser refresh or server restart.
+Use Saved datasets > Open saved dataset to reopen earlier snapshots.
+Exact reimports reuse the existing normalized-content hash and retain the original name/date.
+Changed data creates a new snapshot, even if the uploaded filename is the same.
+Source labels and synthetic/imported status are preserved, not independently verified.
 Use the exported demo as an import-format template.
+
+## Persistence and history
+- Database: `data/energy_geolab.sqlite3`, created automatically on first use.
+- Each successful Find nearest substations calculation saves a new history entry.
+- Saved analysis history > Open selected analysis reopens the original result and dataset.
+- History is paginated in groups of 50; Refresh history picks up other local-tab activity.
+- Open synthetic demo switches the active dataset; it does not delete imports/history.
+- The active dataset is shared by local browser tabs. This is a single-user local application.
+- Failed validation does not replace the active dataset or create a dataset record.
+- Storage failures are displayed; the application does not claim to save when writes fail.
+- Existing `/api/nearest` and `/api/validate` endpoints remain stateless for compatibility.
+  Persistent UI actions use `/api/datasets` and `/api/analyses`.
+- Dataset snapshots and historical reports are immutable through the API; deletion is not exposed.
+
+### Update and backup
+Stop START.bat with Ctrl+C before updating or backing up.
+Extract this version into the same project folder without deleting the existing `data` folder.
+For a manual backup with the application stopped, copy `data/energy_geolab.sqlite3`
+to a separate location. The ZIP and Git repository exclude all local databases.
+Restore a backup only with the application stopped. Keep your original backup.
+Moving the app to a new folder does not automatically move its database: copy the data folder too.
+`ENERGY_DB_PATH` can override the database path; tests use temporary databases.
+SQLite is part of Python: no database server or extra database package is required.
+
+### Schema
+`datasets` stores normalized GeoJSON, source status counts, creation time and SHA-256.
+`analyses` references datasets with a foreign key and stores the original report and UTC creation time.
+`settings` stores the last active dataset. Schema version is 1.
+Browser dates display in the local timezone; exports preserve UTC timestamps.
 
 ## Normalized GeoJSON format
 Root: FeatureCollection with a nonempty features array.

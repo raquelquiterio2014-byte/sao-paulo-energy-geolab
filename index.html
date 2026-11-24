@@ -19,14 +19,22 @@
 <div class="card"><h2>Spatial analysis</h2><label for="plant">Select a visible plant</label><select id="plant"></select>
 <button id="analyze">Find nearest substations</button><p><small id="scope"></small></p></div>
 <div class="card"><h2>Dataset</h2><label for="upload">Import normalized GeoJSON</label><input id="upload" type="file" accept=".json,.geojson">
-<button id="demo">Restore synthetic demo</button><button id="download">Export loaded GeoJSON</button>
-<p><small>Imports stay in this browser session. Export to keep a copy. Reloading restores the demo. Limit: 20 MiB / 20,000 features.</small></p></div></aside>
+<button id="demo">Open synthetic demo</button><button id="download">Export loaded GeoJSON</button>
+<label for="savedDataset">Saved datasets</label><select id="savedDataset"></select>
+<button id="openDataset">Open saved dataset</button>
+<p id="savedStatus" role="status"></p>
+<p><small>Imports and analyses are saved locally in SQLite. Reloading restores the last active dataset. Limit: 20 MiB / 20,000 features.</small></p></div></aside>
 <section><div id="error" role="alert"></div><div class="card"><div id="stats"></div>
 <div class="legend"><span style="color:#50ddd4">● Plants</span><span style="color:#ffcc6d">● Substations</span><span style="color:#ad9dff">━ Supplied lines</span><span>Dashed: distance measurements</span></div>
 <div id="map"></div><p id="mapstatus" class="muted"></p><p><small>Measurements are not electrical connections. Supplied line geometry does not establish electrical topology or available capacity.</small></p></div>
 <div class="card"><h2>Asset details</h2><p class="muted">Click an installation or line on the map.</p><pre id="details">No asset selected.</pre></div>
 <div class="card"><h2>Nearest substations</h2><p id="analysisnote">Select a plant to calculate WGS84 geodesic distances.</p><div class="scroll"><table><thead><tr><th>Substation</th><th>State</th><th>Distance (km)</th><th>Connection</th></tr></thead><tbody id="results"></tbody></table></div><button id="csv">Export results CSV</button><button id="report">Export analysis JSON</button></div>
-<div class="card"><h2>Regional comparison</h2><p class="muted">Current map filters. Capacity means installed capacity in the supplied records, not actual generation.</p><div class="scroll"><table><thead><tr><th>State</th><th>Plants</th><th>Substations</th><th>Lines*</th><th>Known MW</th><th>Plants missing MW</th></tr></thead><tbody id="summary"></tbody></table></div><p><small>*Line records are grouped by declared state. Split cross-border routes before import. Counts are dataset counts, not official national totals.</small></p></div>
+<div class="card"><h2>Saved analysis history</h2>
+<p>Reopen a result with its original dataset snapshot. All times shown in your browser's local timezone.</p>
+<label for="history">Select a saved analysis</label><select id="history"></select>
+<button id="openHistory">Open selected analysis</button><button id="refreshHistory">Refresh history</button>
+<p id="historyCount"></p><button id="previousHistory">Previous 50</button><button id="nextHistory">Next 50</button>
+</div><div class="card"><h2>Regional comparison</h2><p class="muted">Current map filters. Capacity means installed capacity in the supplied records, not actual generation.</p><div class="scroll"><table><thead><tr><th>State</th><th>Plants</th><th>Substations</th><th>Lines*</th><th>Known MW</th><th>Plants missing MW</th></tr></thead><tbody id="summary"></tbody></table></div><p><small>*Line records are grouped by declared state. Split cross-border routes before import. Counts are dataset counts, not official national totals.</small></p></div>
 <div class="card"><h2>Methodology & data quality</h2><p id="quality"></p><ul><li>Coordinates: WGS84 longitude/latitude. Distances: ellipsoidal geodesics.</li><li>Dates are source dates supplied by the importer, not independently verified.</li><li>Imported does not mean verified or complete.</li><li>No power-flow, congestion or investment-feasibility inference.</li><li>Different IDs are not automatically deduplicated across inventories.</li><li>Coordinate and state formats are checked; state-boundary containment is not validated.</li></ul><p>Official reference portals: <a href="https://www.ons.org.br/paginas/sobre-o-sin/mapas" target="_blank" rel="noopener">ONS</a> · <a href="https://www.epe.gov.br/pt/publicacoes-dados-abertos/publicacoes/webmap-epe" target="_blank" rel="noopener">EPE</a></p></div></section></main>
 <script src="https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script>
 <script src="/app.js" defer></script>
