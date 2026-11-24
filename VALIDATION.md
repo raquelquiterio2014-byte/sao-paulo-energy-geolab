@@ -18,3 +18,6 @@ screenshots and exported CSV/JSON. That does not validate the new history contro
 
 No real official dataset or electrical connection validation is included.
 No local database or imported user data is included in the ZIP or repository.
+
+## 1.1.1 verification
+42/42 Python tests passed again. JavaScript syntax passed. A jsdom integration check with mocked API responses verified dataset selection, empty history, enabled controls and saving an analysis while the map library remains pending; a subsequent map-library failure preserves the loaded dataset. This is a simulated DOM test, not a Chrome rendering test.

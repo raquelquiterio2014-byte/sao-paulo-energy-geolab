@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.1 — Startup resilience
+- Load map JavaScript and CSS independently after local SQLite data.
+- Show startup status and request timeouts; log caught errors to the console.
+- Serve explicitly UTF-8 JavaScript and avoid stale local frontend caching.
+- Test saved-data controls with the map CDN pending and failed in a simulated DOM.
+
+
 ## 1.1 — SQLite persistence
 - Persist validated dataset snapshots and the active dataset in local SQLite.
 - Save every UI analysis with its original dataset, timestamp, report and SHA-256.

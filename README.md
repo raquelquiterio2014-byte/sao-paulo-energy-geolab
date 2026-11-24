@@ -1,6 +1,6 @@
 # Sao Paulo Energy GeoLab
 
-Version 1.1 — SQLite persistence. Educational local application. Interface and code in English.
+Version 1.1.1 — SQLite persistence and independent map loading. Educational local application. Interface and code in English.
 
 ## Windows quick start
 1. Extract the ZIP completely to a writable folder (not inside the ZIP).
@@ -138,3 +138,6 @@ If map resources fail, the tables, import and calculations can still work.
 
 Review source license, dates, schema and coverage before adapting official data.
 See VALIDATION.md for the actual checks performed on this delivery.
+
+## Startup fix in 1.1.1
+MapLibre JavaScript and CSS load dynamically after local datasets/history. A slow or unavailable CDN cannot block the local-data startup. API requests time out after 20 seconds and map-library loading after 12 seconds. A startup status appears under the title; caught errors also appear in the browser console. Local HTML/JavaScript use no-store headers and the script URL is versioned.

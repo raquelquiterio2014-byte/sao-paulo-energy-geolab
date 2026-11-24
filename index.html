@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Energy GeoLab</title>
-<link href="https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.css" rel="stylesheet">
+
 <style>
 :root{color-scheme:dark;--accent:#4fd8d0}*{box-sizing:border-box}body{margin:0;background:#0b1424;color:#e5edf7;font:15px system-ui,sans-serif}header{padding:25px 30px;background:#12243b;border-bottom:1px solid #28435e}h1{margin:0 0 8px;font-size:28px}h2{font-size:19px}p{line-height:1.5}small,.muted{color:#b0c4d8}main{display:grid;grid-template-columns:290px minmax(0,1fr);gap:18px;padding:20px}aside,section{min-width:0}.card{background:#122035;border:1px solid #29415c;border-radius:12px;padding:17px;margin-bottom:16px}label{display:block;margin:12px 0 5px}select,button,input{font:inherit;width:100%;padding:10px;border-radius:6px;border:1px solid #49627d;background:#182d46;color:#fff}button{cursor:pointer;background:#176c81;margin-top:9px}button:disabled{opacity:.5;cursor:wait}#map{height:490px;border-radius:10px;background:#182d46}#notice{color:#ffdb8b}#error{color:#ffb3b3;white-space:pre-wrap}#stats{font-size:16px;color:var(--accent);margin:12px 0}table{border-collapse:collapse;width:100%;font-size:13px}th,td{text-align:left;padding:10px;border-bottom:1px solid #29415c}.scroll{overflow:auto}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}.legend{display:flex;gap:18px;flex-wrap:wrap;margin:12px 0;font-size:13px}a{color:#8de6ff}input[type=checkbox]{width:auto}@media(max-width:850px){main{grid-template-columns:1fr}#map{height:380px}}
 </style></head><body>
-<header><h1 id="title">Energy GeoLab</h1><div>Generation · Transmission infrastructure · Spatial evidence</div><p id="notice">Loading dataset…</p></header>
+<header><h1 id="title">Energy GeoLab</h1><div>Generation · Transmission infrastructure · Spatial evidence</div><p id="notice">Loading dataset…</p><p id="bootStatus" role="status">Starting interface v1.1.1…</p></header>
 <main><aside><div class="card"><h2>Explore the grid</h2>
 <label for="region">Region</label><select id="region"></select>
 <label for="state">State</label><select id="state"></select>
@@ -36,6 +36,6 @@
 <p id="historyCount"></p><button id="previousHistory">Previous 50</button><button id="nextHistory">Next 50</button>
 </div><div class="card"><h2>Regional comparison</h2><p class="muted">Current map filters. Capacity means installed capacity in the supplied records, not actual generation.</p><div class="scroll"><table><thead><tr><th>State</th><th>Plants</th><th>Substations</th><th>Lines*</th><th>Known MW</th><th>Plants missing MW</th></tr></thead><tbody id="summary"></tbody></table></div><p><small>*Line records are grouped by declared state. Split cross-border routes before import. Counts are dataset counts, not official national totals.</small></p></div>
 <div class="card"><h2>Methodology & data quality</h2><p id="quality"></p><ul><li>Coordinates: WGS84 longitude/latitude. Distances: ellipsoidal geodesics.</li><li>Dates are source dates supplied by the importer, not independently verified.</li><li>Imported does not mean verified or complete.</li><li>No power-flow, congestion or investment-feasibility inference.</li><li>Different IDs are not automatically deduplicated across inventories.</li><li>Coordinate and state formats are checked; state-boundary containment is not validated.</li></ul><p>Official reference portals: <a href="https://www.ons.org.br/paginas/sobre-o-sin/mapas" target="_blank" rel="noopener">ONS</a> · <a href="https://www.epe.gov.br/pt/publicacoes-dados-abertos/publicacoes/webmap-epe" target="_blank" rel="noopener">EPE</a></p></div></section></main>
-<script src="https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script>
-<script src="/app.js" defer></script>
+
+<script src="/app.js?v=1.1.1" defer></script>
 </body></html>

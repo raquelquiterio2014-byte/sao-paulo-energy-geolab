@@ -6,12 +6,20 @@ let currentMeasurements = empty(), config = null, revision = 0;
 let savedDatasetId = null, historyOffset = 0, historyTotal = 0;
 async function api(path, payload) {
   const options = payload === undefined ? {} : {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)};
-  const response = await fetch(path, options);
-  const result = await response.json();
+  const controller=new AbortController();
+  const timer=setTimeout(() => controller.abort(), 20000);
+  let response, result;
+  try {
+    response=await fetch(path, {...options, signal:controller.signal, cache:'no-store'});
+    result=await response.json();
+  } catch(error) {
+    if(error.name === 'AbortError') throw Error(`Server request timed out: ${path}. Check the START.bat terminal, then reload.`);
+    throw Error(`Could not load ${path}: ${error.message}`);
+  } finally {clearTimeout(timer);}
   if (!response.ok) throw Error(typeof result.detail === 'string' ? result.detail : JSON.stringify(result.detail));
   return result;
 }
-function fail(error) {$('error').textContent = error.message || String(error);}
+function fail(error) {console.error(error); $('error').textContent = error.message || String(error);}
 function options(id, values) {
   const select = $(id), previous = select.value;
   select.replaceChildren(new Option('All', ''));
@@ -180,12 +188,40 @@ $('report').onclick = () => {
   if(!analysis) return fail(Error('Run an analysis first.'));
   download('analysis.json', JSON.stringify(analysis,null,2), 'application/json');
 };
+function bootStatus(text) {
+  const element=$('bootStatus');
+  if(element) element.textContent=text;
+}
+function loadMapLibrary() {
+  if(window.maplibregl) return Promise.resolve();
+  return new Promise((resolve,reject) => {
+    const css=document.createElement('link');
+    css.rel='stylesheet'; css.href='https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.css';
+    document.head.append(css);
+    const script=document.createElement('script');
+    script.async=true;
+    script.src='https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.js';
+    const timer=setTimeout(() => {script.remove();reject(Error('Map library timed out.'));},12000);
+    script.onload=() => {clearTimeout(timer);resolve();};
+    script.onerror=() => {clearTimeout(timer);reject(Error('Map library could not load.'));};
+    document.head.append(script);
+  });
+}
 async function start() {
+  bootStatus('Connecting to local server…');
   config = await api('/api/config'); $('title').textContent=config.title; document.title=config.title;
   $('scope').textContent='Searches all substations in the loaded dataset, regardless of map filters. '+(config.scope ? 'SP records only; cross-border candidates require the Brazil edition.' : 'Candidates may cross state boundaries.');
+  bootStatus('Reading saved SQLite dataset…');
   acceptSaved(await api('/api/state'));
   await refreshDatasets(); await refreshHistory();
+  bootStatus('SQLite ready — interface v1.1.1. Saved datasets and history loaded.');
+  // Map startup is independent; a CDN delay cannot hold the database controls disabled.
+  void initializeMap();
+}
+async function initializeMap() {
+  $('mapstatus').textContent='Loading map library; saved datasets and history are ready.';
   try {
+    await loadMapLibrary();
     if(!window.maplibregl) throw Error('MapLibre could not load.');
     map = new maplibregl.Map({container:'map',center:config.center,zoom:config.zoom,
       style:{version:8,sources:{base:{type:'raster',tileSize:256,tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],attribution:'© OpenStreetMap contributors'}},layers:[{id:'base',type:'raster',source:'base'}]}});
@@ -198,8 +234,8 @@ async function start() {
       map.addLayer({id:'points',type:'circle',source:'assets',filter:['==',['geometry-type'],'Point'],paint:{'circle-radius':7,'circle-color':['match',['get','kind'],'plant','#0ca99f','#e69a18'],'circle-stroke-color':'#fff','circle-stroke-width':1}});
       map.addLayer({id:'measurements',type:'line',source:'measurements',paint:{'line-color':'#27374b','line-width':3,'line-dasharray':[2,2]}});
       ['points','routes'].forEach(layer => map.on('click',layer,event => {$('details').textContent=JSON.stringify(event.features[0].properties,null,2);}));
-      ready=true; refresh(); fit();
+      ready=true; $('mapstatus').textContent=''; refresh(); fit();
     });
   } catch(e) {$('mapstatus').textContent='Map unavailable: '+e.message+' Tables and analysis still work.';}
 }
-busy(start);
+busy(async () => {try {await start();} catch(error) {bootStatus('Startup failed — see the error above the map.');throw error;}});

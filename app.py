@@ -169,7 +169,7 @@ app.add_middleware(TrustedHostMiddleware, allowed_hosts=['127.0.0.1', 'localhost
 
 @app.get('/', response_class=HTMLResponse)
 def home():
-    return (BASE / 'index.html').read_text(encoding='utf-8')
+    return HTMLResponse((BASE / 'index.html').read_text(encoding='utf-8'), headers={'Cache-Control':'no-store'})
 
 
 @app.get('/api/config')
@@ -179,7 +179,7 @@ def config():
 
 @app.get('/app.js')
 def javascript():
-    return FileResponse(BASE / 'app.js', media_type='application/javascript')
+    return FileResponse(BASE / 'app.js', media_type='text/javascript; charset=utf-8', headers={'Cache-Control':'no-store'})
 
 
 @app.get('/api/demo')
